@@ -343,6 +343,9 @@ function App() {
 }
 
   function updateCount(){
+    if(down < 20){
+      return;
+    }
     set(ref(db, 'DownloadsCount'), {
       DownloadsCount: down+1
     });
@@ -372,21 +375,21 @@ function App() {
   return (
     <div className='h-screen w-full'>
       <Toaster richColors={true}/>
-      <div className='h-[10vh] w-full bg-blue-900 justify-center flex items-center text-5xl font-semibold text-white'>
+      <div className='h-[10vh] w-full bg-blue-900 justify-center flex items-center md:text-5xl text-3xl font-semibold text-white'>
         IdeaGem Certificate
       </div>
-      <section className='h-[80vh] w-full flex'>
-        <div className='w-[50vw] h-full justify-center items-center flex flex-col '>
+      <section className='h-[80vh] w-full flex flex-col md:flex-row'>
+        <div className='md:w-[50vw] w-full h-full justify-center items-center flex flex-col '>
           <img alt='logo' src={logo}/>
           <p className=' text-xl font-medium'>Total Certificates Downloaded : {down}</p>
         </div>
-        <div className='w-[50vw] h-full justify-center items-center flex flex-col gap-4'>
+        <div className='md:w-[50vw] w-full h-full justify-center items-center flex flex-col gap-4'>
           <input className=' py-2 px-4 w-1/2 border-2 border-blue-900 rounded-md shadow-lg' type='email' placeholder='Enter registered e-mail' value={email} onChange={(e)=>setEmail(e.target.value)} />
           <button type='submit' onClick={searchResult} className='bg-blue-900 hover:bg-slate-600 shadow-md rounded-md py-2 px-5 font-medium text-white'>Find</button>
         </div>
       </section>
       <div className='h-[10vh] w-full border-t-2 bg-blue-900 text-white justify-center items-center font-semibold text-2xl flex flex-col '>
-        <a href='https://www.linkedin.com/in/yadavroshni/'  rel="noreferrer" target='_blank'><h1>Developed by Roshi Yadav</h1></a>
+        <a href='https://www.linkedin.com/in/yadavroshni/'  rel="noreferrer" target='_blank'><h1>Developed by Roshni Yadav</h1></a>
         <h1 className='text-sm'>ACM SSCBS 2024-25</h1>
       </div>
     </div>
