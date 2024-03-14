@@ -1,8 +1,15 @@
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import logo from './logo.png'
+import { Toaster, toast } from 'sonner';
+import { getDatabase, ref, onValue, set } from "firebase/database";
+import app from './firebase';
+
+
 
 function App() {
+  const db = getDatabase(app);
+  const [down, setDown] = useState(10);
   const [email, setEmail] = useState("");
   const data = {'balasrinivasan.sa.ece.2022@snsct.org.pdf': 'https://drive.google.com/file/d/1SZTrJXYqrBTPArES-OKhIdgyeJYWiunW/view?usp=drive_link', 
   'arundas.k.cse.2021@snsct.org.pdf': 'https://drive.google.com/file/d/1CePNnJbuNEZeI5FvW9tNidB94tsaZnBF/view?usp=drive_link', 
@@ -335,31 +342,52 @@ function App() {
   'ywiwkskdkdj@gamil.vom.pdf': 'https://drive.google.com/file/d/1oZ-elmwpzuQpneBPdE--Rx12Hdi973yN/view?usp=drive_link'
 }
 
+  function updateCount(){
+    set(ref(db, 'DownloadsCount'), {
+      DownloadsCount: down+1
+    });
+  }
+
+  useEffect(() => {
+    const downloadCount = ref(db, 'DownloadsCount/DownloadsCount');
+    onValue(downloadCount, (snapshot) => {
+      const data = snapshot.val();
+      setDown(data);
+    });
+    console.log("Data Fetched")
+  }, []);
+
+
   function searchResult(){
-    if(Object.keys(data).includes(email+'.pdf')){
-      const url = data[email+'.pdf'];
-      window.open(url, '_blank');
+    if(Object.keys(data).includes(email.toLowerCase()+'.pdf')){
+      const url = data[email.toLowerCase()+'.pdf'];
+      toast.success('Certificate Found! Here is your Certificate!')
+      setTimeout(()=>{window.open(url, '_blank');setEmail("")}, 2000)
+      updateCount();
     }else{
-      alert('No certificate associated with this e-mail')
+      toast.error('No Certificate Associated with this E-mail')
     }
   }
 
   return (
     <div className='h-screen w-full'>
+      <Toaster richColors={true}/>
       <div className='h-[10vh] w-full bg-blue-900 justify-center flex items-center text-5xl font-semibold text-white'>
         IdeaGem Certificate
       </div>
       <section className='h-[80vh] w-full flex'>
-        <div className='w-[50vw] h-full justify-center items-center flex'>
+        <div className='w-[50vw] h-full justify-center items-center flex flex-col '>
           <img alt='logo' src={logo}/>
+          <p className=' text-xl font-medium'>Total Certificates Downloaded : {down}</p>
         </div>
         <div className='w-[50vw] h-full justify-center items-center flex flex-col gap-4'>
-          <input className=' py-2 px-4 w-1/2 border-2 border-blue-900 rounded-md' type='email' placeholder='Enter registered e-mail' value={email} onChange={(e)=>setEmail(e.target.value)} />
-          <button onClick={searchResult} className='bg-blue-900 hover:bg-slate-600 rounded-md py-2 px-4 font-medium text-white'>Find</button>
+          <input className=' py-2 px-4 w-1/2 border-2 border-blue-900 rounded-md shadow-lg' type='email' placeholder='Enter registered e-mail' value={email} onChange={(e)=>setEmail(e.target.value)} />
+          <button type='submit' onClick={searchResult} className='bg-blue-900 hover:bg-slate-600 shadow-md rounded-md py-2 px-5 font-medium text-white'>Find</button>
         </div>
       </section>
-      <div className='h-[10vh] w-full border-t-2 bg-blue-900 text-white flex justify-center items-center font-semibold text-2xl '>
-        <a href='https://www.linkedin.com/in/yadavroshni/'  rel="noreferrer" target='_blank'><h1>Developed by Roshni Yadav</h1></a>
+      <div className='h-[10vh] w-full border-t-2 bg-blue-900 text-white justify-center items-center font-semibold text-2xl flex flex-col '>
+        <a href='https://www.linkedin.com/in/yadavroshni/'  rel="noreferrer" target='_blank'><h1>Developed by Roshi Yadav</h1></a>
+        <h1 className='text-sm'>ACM SSCBS 2024-25</h1>
       </div>
     </div>
   );
